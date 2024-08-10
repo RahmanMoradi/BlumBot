@@ -313,17 +313,13 @@ class Blum:
                 
                 for task in tasks:
                     if task.status == task.Status.not_started \
-                    and task.type != task.Type.progress_target \
-                    and task.type != task.Type.wallet_connection \
-                    and task.type != task.Type.internal \
-                    :
-                        await self.start_task(task.id)
-                    elif task.status == task.Status.started:
-                        if task.socialSubscription and task.socialSubscription.openInTelegram:
-                            # skip the channel join tasks for now
-                            continue
-                            # await self.subscribe(task.socialSubscription.url)
-                            
+                        and task.type != task.Type.progress_target \
+                        and task.type != task.Type.wallet_connection \
+                        and task.type != task.Type.internal \
+                        :
+                            await self.start_task(task.id)
+
+                    elif task.status == task.Status.ready_for_claim:  
                         await self.claim_task(task.id)
 
             if balance.game_passes > 0 and settings.PLAY_GAMES:
