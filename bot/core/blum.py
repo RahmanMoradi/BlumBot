@@ -187,7 +187,11 @@ class Blum:
 
     async def get_tasks(self) -> list[Task]:
         response = await self.__request(RequestMethods.GET, self.game_uri + "/tasks")
-        return [Task(**task) for task in response]
+        tasks = []
+        for obj in response:
+            tasks += obj["tasks"]
+        print(tasks)
+        return [Task(**task) for task in tasks]
 
     async def start_task(self, task_id: str) -> Optional[Task]:
         try:
@@ -307,7 +311,11 @@ class Blum:
                 tasks = await self.get_tasks()
                 
                 for task in tasks:
-                    if task.status == task.Status.not_started and task.type != task.Type.progress_target:
+                    if task.status == task.Status.not_started \
+                    and task.type != task.Type.progress_target \
+                    and task.type != task.Type.wallet_connection \
+                    and task.type != task.Type.internal \
+                    :
                         await self.start_task(task.id)
                     elif task.status == task.Status.started:
                         if task.socialSubscription and task.socialSubscription.openInTelegram:
