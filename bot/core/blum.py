@@ -187,10 +187,11 @@ class Blum:
 
     async def get_tasks(self) -> list[Task]:
         response = await self.__request(RequestMethods.GET, self.game_uri + "/tasks")
+        
         tasks = []
         for obj in response:
             tasks += obj["tasks"]
-        print(tasks)
+
         return [Task(**task) for task in tasks]
 
     async def start_task(self, task_id: str) -> Optional[Task]:
