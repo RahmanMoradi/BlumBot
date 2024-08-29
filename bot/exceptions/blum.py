@@ -32,5 +32,7 @@ class TaskNotComplete(Exception):
 class CannotGetTasks(Exception):
     pass
     
+class CannotGetTaskEvents(Exception):
+    pass
 class CannotStartGame(Exception):
     pass

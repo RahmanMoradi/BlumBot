@@ -17,7 +17,7 @@ from pyrogram.raw.functions.messages import RequestWebView
 
 from bot.config import settings
 from bot.exceptions import ClaimRewardNextDay, NeedToStartFarm, UsernameNotAvailable, ReferralTokenUnavailable, \
-    UserNotFound, AccountNotFound, TaskAlreadyClaimed, TaskNotComplete, CannotGetTasks, CannotStartGame
+    UserNotFound, AccountNotFound, TaskAlreadyClaimed, TaskNotComplete, CannotGetTasks, CannotStartGame, CannotGetTaskEvents
 from bot.models import AuthResponse, BalanceResponse, TelegramWebData, ClaimFarmingResponse, Farming, StartGameResponse, \
     Task
 from bot.utils.logger import logger
@@ -299,6 +299,8 @@ class Blum:
                     raise TaskNotComplete(error_message)
                 elif error_message == "can not get task":
                     raise CannotGetTasks(error_message)
+                elif error_message == "can not get task events":
+                    raise CannotGetTaskEvents(error_message)
                 elif error_message == "cannot start game":
                     raise CannotStartGame(error_message)
                 raise Exception(error_message)
