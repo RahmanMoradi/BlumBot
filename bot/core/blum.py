@@ -38,14 +38,14 @@ def format_duration(seconds):
 def retry_async(max_retries=2):
     def decorator(func):
         async def wrapper(*args, **kwargs):
-            thread, account = args[0].thread, args[0].account
+            session = args[0].session_name
             retries = 0
             while retries < max_retries:
                 try:
                     return await func(*args, **kwargs)
                 except Exception as e:
                     retries += 1
-                    logger.error(f"Thread {thread} | {account} | Error: {e}. Retrying {retries}/{max_retries}...")
+                    logger.error(f"Session {session} | Error: {e}. Retrying {retries}/{max_retries}...")
                     await asyncio.sleep(10)
                     if retries >= max_retries:
                         break
