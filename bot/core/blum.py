@@ -35,6 +35,22 @@ def format_duration(seconds):
     minutes, seconds = divmod(remainder, 60)
     return f"{int(hours)} hours {int(minutes)} minutes {int(seconds)} seconds"
 
+def retry_async(max_retries=2):
+    def decorator(func):
+        async def wrapper(*args, **kwargs):
+            thread, account = args[0].thread, args[0].account
+            retries = 0
+            while retries < max_retries:
+                try:
+                    return await func(*args, **kwargs)
+                except Exception as e:
+                    retries += 1
+                    logger.error(f"Thread {thread} | {account} | Error: {e}. Retrying {retries}/{max_retries}...")
+                    await asyncio.sleep(10)
+                    if retries >= max_retries:
+                        break
+        return wrapper
+    return decorator
 
 class Blum:
     def __init__(self, tg_client: Client, proxy: Optional[str] = None):
@@ -136,6 +152,7 @@ class Blum:
                                         json=payload)
         return AuthResponse(**response)
 
+    @retry_async()
     async def claim_daily_reward(self) -> bool:
         try:
             response = await self.__request(RequestMethods.POST, self.game_uri + "/daily-reward",
