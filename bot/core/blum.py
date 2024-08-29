@@ -139,7 +139,7 @@ class Blum:
     async def claim_daily_reward(self) -> bool:
         try:
             response = await self.__request(RequestMethods.POST, self.game_uri + "/daily-reward",
-                                            params={"offset": -180})
+                                            params={"offset": -420})
             if response["message"] == "OK":
                 self.logger.success(f"Daily reward claimed")
                 return True
