@@ -203,7 +203,8 @@ class Blum:
         await asyncio.sleep(random.uniform(35, 40))
 
         await self.claim_game(game_id)
-
+        
+    @retry_async(exception=CannotGetTasks)
     async def get_tasks(self) -> list[Task]:
         response = await self.__request(RequestMethods.GET, self.game_uri + "/tasks")
         
@@ -222,7 +223,8 @@ class Blum:
         except TaskAlreadyClaimed:
             self.logger.debug(f"Failed to start task {task_id} (already claimed)")
         return None
-
+    
+    @retry_async(exception=CannotGetTaskEvents)
     async def claim_task(self, task_id: str) -> Optional[Task]:
         await asyncio.sleep(random.uniform(10, 20))
         try:
