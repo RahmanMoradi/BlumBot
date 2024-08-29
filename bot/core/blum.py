@@ -6,7 +6,6 @@ from typing import Optional
 from urllib import parse
 
 import aiohttp
-from bot.exceptions.blum import CannotStartGame
 import pyrogram.types
 from aiohttp import ContentTypeError
 from pyrogram import Client
@@ -18,7 +17,7 @@ from pyrogram.raw.functions.messages import RequestWebView
 
 from bot.config import settings
 from bot.exceptions import ClaimRewardNextDay, NeedToStartFarm, UsernameNotAvailable, ReferralTokenUnavailable, \
-    UserNotFound, AccountNotFound, TaskAlreadyClaimed, TaskNotComplete
+    UserNotFound, AccountNotFound, TaskAlreadyClaimed, TaskNotComplete, CannotGetTasks, CannotStartGame
 from bot.models import AuthResponse, BalanceResponse, TelegramWebData, ClaimFarmingResponse, Farming, StartGameResponse, \
     Task
 from bot.utils.logger import logger
@@ -298,6 +297,8 @@ class Blum:
                     raise TaskAlreadyClaimed(error_message)
                 elif error_message == "Task is not done":
                     raise TaskNotComplete(error_message)
+                elif error_message == "can not get task":
+                    raise CannotGetTasks(error_message)
                 elif error_message == "cannot start game":
                     raise CannotStartGame(error_message)
                 raise Exception(error_message)

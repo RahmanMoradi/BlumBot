@@ -29,5 +29,8 @@ class TaskAlreadyClaimed(Exception):
 class TaskNotComplete(Exception):
     pass
     
+class CannotGetTasks(Exception):
+    pass
+    
 class CannotStartGame(Exception):
     pass
