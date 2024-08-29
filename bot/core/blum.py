@@ -6,6 +6,7 @@ from typing import Optional
 from urllib import parse
 
 import aiohttp
+from bot.exceptions.blum import CannotStartGame
 import pyrogram.types
 from aiohttp import ContentTypeError
 from pyrogram import Client
@@ -35,7 +36,7 @@ def format_duration(seconds):
     minutes, seconds = divmod(remainder, 60)
     return f"{int(hours)} hours {int(minutes)} minutes {int(seconds)} seconds"
 
-def retry_async(max_retries=2):
+def retry_async(max_retries=2, exception=Exception):
     def decorator(func):
         async def wrapper(*args, **kwargs):
             session = args[0].session_name
@@ -43,7 +44,7 @@ def retry_async(max_retries=2):
             while retries < max_retries:
                 try:
                     return await func(*args, **kwargs)
-                except Exception as e:
+                except exception as e:
                     retries += 1
                     logger.error(f"Session {session} | Error: {e}. Retrying {retries}/{max_retries}...")
                     await asyncio.sleep(10)
@@ -72,7 +73,8 @@ class Blum:
 
     async def logout(self):
         await self.session.close()
-
+        
+    @retry_async(exception=ContentTypeError)
     async def login(self, referral_code: str | list[str] = None) -> AuthResponse:
         payload = {"query": await self.get_telegram_web_data()}
 
@@ -181,6 +183,7 @@ class Blum:
         response = await self.__request(RequestMethods.GET, self.game_uri + "/user/balance")
         return BalanceResponse(**response)
 
+    @retry_async(exception=CannotStartGame)
     async def start_game(self) -> str:
         response = await self.__request(RequestMethods.POST, self.game_uri + "/game/play")
         self.logger.debug(f"Game started")
@@ -295,6 +298,8 @@ class Blum:
                     raise TaskAlreadyClaimed(error_message)
                 elif error_message == "Task is not done":
                     raise TaskNotComplete(error_message)
+                elif error_message == "cannot start game":
+                    raise CannotStartGame(error_message)
                 raise Exception(error_message)
             return jsoned
         elif 'text/plain' in content_type:

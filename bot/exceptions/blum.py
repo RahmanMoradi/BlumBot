@@ -28,3 +28,6 @@ class TaskAlreadyClaimed(Exception):
 
 class TaskNotComplete(Exception):
     pass
+    
+class CannotStartGame(Exception):
+    pass
