@@ -29,10 +29,18 @@ class TaskAlreadyClaimed(Exception):
 class TaskNotComplete(Exception):
     pass
     
+    
 class CannotGetTasks(Exception):
     pass
     
+    
 class CannotGetTaskEvents(Exception):
     pass
+    
+    
 class CannotStartGame(Exception):
+    pass
+
+
+class HtmlContentType(Exception):
     pass

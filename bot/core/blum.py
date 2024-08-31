@@ -6,6 +6,7 @@ from typing import Optional
 from urllib import parse
 
 import aiohttp
+from bot.exceptions.blum import HtmlContentType
 import pyrogram.types
 from aiohttp import ContentTypeError
 from pyrogram import Client
@@ -17,9 +18,12 @@ from pyrogram.raw.functions.messages import RequestWebView
 
 from bot.config import settings
 from bot.exceptions import ClaimRewardNextDay, NeedToStartFarm, UsernameNotAvailable, ReferralTokenUnavailable, \
-    UserNotFound, AccountNotFound, TaskAlreadyClaimed, TaskNotComplete, CannotGetTasks, CannotStartGame, CannotGetTaskEvents
+    UserNotFound, AccountNotFound, TaskAlreadyClaimed, TaskNotComplete, CannotGetTasks, CannotStartGame, CannotGetTaskEvents, \
+    HtmlContentType
+    
 from bot.models import AuthResponse, BalanceResponse, TelegramWebData, ClaimFarmingResponse, Farming, StartGameResponse, \
     Task
+    
 from bot.utils.logger import logger
 
 
@@ -73,7 +77,7 @@ class Blum:
     async def logout(self):
         await self.session.close()
         
-    @retry_async(exception=ContentTypeError)
+    @retry_async(exception=HtmlContentType)
     async def login(self, referral_code: str | list[str] = None) -> AuthResponse:
         payload = {"query": await self.get_telegram_web_data()}
 
@@ -309,6 +313,8 @@ class Blum:
             return jsoned
         elif 'text/plain' in content_type:
             return {"message": await response.text()}
+        elif "text/html" in content_type:
+            raise HtmlContentType(error_message)
         else:
             raise Exception(f"Unexpected content type: {content_type}")
 
