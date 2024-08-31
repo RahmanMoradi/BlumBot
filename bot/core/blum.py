@@ -314,7 +314,7 @@ class Blum:
         elif 'text/plain' in content_type:
             return {"message": await response.text()}
         elif "text/html" in content_type:
-            raise HtmlContentType(error_message)
+            raise HtmlContentType()
         else:
             raise Exception(f"Unexpected content type: {content_type}")
 
