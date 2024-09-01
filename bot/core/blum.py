@@ -367,7 +367,7 @@ class Blum:
                 sleep_duration = (balance.farming.end - balance.now_timestamp) // 1000 + 1
                 self.logger.info(f"Farm sleep {format_duration(sleep_duration)}")
                 await asyncio.sleep(sleep_duration)
-                await self.refresh_tokens()
+                await self.login()
 
 
 async def run_blum(tg_client: Client, proxy: Optional[str] = None):
