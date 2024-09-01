@@ -169,6 +169,7 @@ class Blum:
             self.logger.debug(f"Daily reward already claimed")
         return False
 
+    retry_async(exception=HtmlContentType)
     async def claim_farming(self) -> ClaimFarmingResponse:
         try:
             response = await self.__request(RequestMethods.POST, self.game_uri + "/farming/claim")
