@@ -77,7 +77,6 @@ class Blum:
     async def logout(self):
         await self.session.close()
         
-    @retry_async(exception=HtmlContentType)
     async def login(self, referral_code: str | list[str] = None) -> AuthResponse:
         payload = {"query": await self.get_telegram_web_data()}
 
@@ -169,7 +168,6 @@ class Blum:
             self.logger.debug(f"Daily reward already claimed")
         return False
 
-    retry_async(exception=HtmlContentType)
     async def claim_farming(self) -> ClaimFarmingResponse:
         try:
             response = await self.__request(RequestMethods.POST, self.game_uri + "/farming/claim")
@@ -278,7 +276,8 @@ class Blum:
 
         self.session.headers["Authorization"] = "Bearer " + parsed.access_token
         self.refresh_token = parsed.refresh_token
-
+    
+    @retry_async(exception=HtmlContentType)
     async def __request(self, method: RequestMethods, url: str, **args) -> dict:
         response = await self.session.request(method, url, proxy=self.proxy, **args)
         settings.IS_DEV_MODE and print(await response.text())
