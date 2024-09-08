@@ -59,7 +59,7 @@ def retry_async(max_retries=2, exception=Exception):
 class Blum:
     def __init__(self, tg_client: Client, proxy: Optional[str] = None):
         self.game_uri = "https://game-domain.blum.codes/api/v1"
-        self.auth_uri = "https://gateway.blum.codes/v1"
+        self.auth_uri = "https://user-domain.blum.codes/api/v1"
 
         self.telegram_web = "https://telegram.blum.codes"
 
